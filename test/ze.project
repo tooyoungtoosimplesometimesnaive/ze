@@ -1,0 +1,4 @@
+version: 0.1
+export: test_class.cpp, test_class.hpp
+dir: lib
+author: someone
