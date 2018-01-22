@@ -1,38 +1,36 @@
 #ifndef ZE_PARSER_H
 #define ZE_PARSER_H
 
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
+
+/**
+ * ze.project file keywords:
+ */
+const std::string Kw_lang = "lang";
+const std::string Kw_version = "version";
+const std::string Kw_lib = "lib";
+const std::string Kw_project_name = "project_name";
+
+const std::string not_found = "404: Not Found";
 
 class ze_parser {
 public:
 	typedef std::pair<std::string, std::string> ze_pair;
 	typedef std::vector<std::string> ze_files;
 
-	ze_parser(std::string file) {
-		std::ifstream infile;
-		infile.open(file);
-		std::string line;
-		while(std::getline(infile, line)) {
-			auto p = get_pair(line);
-			std::cout << p.first << " " << p.second << std::endl;
-		}
-		infile.close();
-	}
+	ze_parser(std::string file);
 
+	bool no_good = false;
 	ze_files files;
+	std::string version;
+	std::string lang;
+	std::string project_name;
+
 private:
-	ze_pair get_pair(std::string line) {
-		auto sep_colon = line.find(":");
-		if (sep_colon != std::string::npos) {
-			return std::make_pair(line.substr(0, sep_colon), line.substr(sep_colon + 1));
-		} else {
-			std::cerr << "Error in this line: '" << line << "'" << std::endl;
-			return std::make_pair("", "");
-		}
-	}
+	ze_pair get_pair(std::string line);
+	std::vector<std::string> split(const std::string s, char delimiter);
 };
 
 #endif

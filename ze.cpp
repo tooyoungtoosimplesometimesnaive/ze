@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <boost/process.hpp>
+#include "ze_parser.h"
 
 using std::string;
 
@@ -10,7 +11,6 @@ from there determine the file path, and file name, check the versions,
 then download the designated files to local.
 */
 
-const string not_found = "404: Not Found";
 
 int main(int argc, char* argv[]) {
 	if (argc <= 2) {
@@ -42,28 +42,21 @@ int main(int argc, char* argv[]) {
 	}
 
 	// parse ze.project
-	std::ifstream in_ze_project;
-	in_ze_project.open("./lib/" + project_name + "/ze.project");
-
-	string line;
-	while (std::getline(in_ze_project, line)) {
-		if (line == not_found) {
-			std::cerr << "No ze.project found!" << std::endl;
-			in_ze_project.close();
-			boost::process::system("rm -rf ./lib/" + project_name);
-			return 1;
-		}
+	ze_parser parser("./lib/" + project_name + "/ze.project");
+	if (parser.no_good) {
+		return 1;
 	}
 
-	in_ze_project.close();
-
+	for (auto file : parser.files) {
+		string command {"curl -o ./lib/" + project_name + "/" + file + " " + remote + file};
+		int result = boost::process::system(command);
+		std::cout << result << std::endl;
+	}
 	/*
-	 * Todo: get file name from ze.project
-	 * */
-
 	string command {"curl -o ./lib/" + project_name + ".cpp" + " " + remote + project_name + ".cpp"};
 	int result = boost::process::system(command);
 	std::cout << result << std::endl;
+	*/
 	return 0;
 }
 
