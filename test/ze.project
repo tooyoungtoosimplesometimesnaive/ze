@@ -1,2 +1,8 @@
 version:0.1
-lib:test_class.cpp,test_class.hpp
+project_name:test
+lib:test_class.cpp,   test_class.hpp
+   dep: sss,    mmmm     
+
+
+
+    lang:    c++
