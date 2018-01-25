@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <boost/process.hpp>
+#include <boost/filesystem.hpp>
 #include "ze_parser.h"
 
 using std::string;
@@ -78,12 +79,7 @@ void ze_init() {
 	std::ofstream init_cpp("./test_path/" + init_file_name + ".cpp");
 	init_cpp << "#include <iostream>\n"
 		<< "#include \"" << init_file_name << ".h\"\n"
-		<< "using std::cout;\n"
-		<< "using std::endl;\n"
-		<< "\n"
-		<< "int main() {\n"
-		<< "\treturn 0;\n"
-		<< "}\n" << std::endl;
+		<< std::endl;
 	init_cpp.close();
 
 	std::ofstream init_h("./test_path/" + init_file_name + ".h");
@@ -94,6 +90,21 @@ void ze_init() {
 		<< "#endif\n"
 		<< std::endl;
 	init_h.close();
+
+	// create test directory:
+	boost::filesystem::path test_dir("./test_path/test");
+	if (boost::filesystem::create_directory(test_dir)) {
+		std::ofstream test_file("./test_path/test/" + project_name + "_test.cpp");
+		test_file << "#include <iostream>\n"
+		<< "#include \"../" << init_file_name << ".h\"\n"
+		<< "using std::cout;\n"
+		<< "using std::endl;\n"
+		<< "\n"
+		<< "int main() {\n"
+		<< "\treturn 0;\n"
+		<< "}\n" << std::endl;
+		test_file.close();
+	}
 }
 
 int main(int argc, char* argv[]) {
