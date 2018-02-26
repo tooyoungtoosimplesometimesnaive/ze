@@ -108,7 +108,6 @@ void ze_init() {
 }
 
 int main(int argc, char* argv[]) {
-	ze_init();
 	if (argc <= 2) {
 		std::cerr << "Need more args!" << std::endl;
 		return 1;
@@ -118,23 +117,30 @@ int main(int argc, char* argv[]) {
 	 * Todo: Should use the command_line_options
 	 */
 	string directive {argv[1]};
-	if (directive != "install") {
+
+	if (directive == "init") {
+		ze_init();
+	}
+	else if (directive == "install") {
+		string project_name {argv[2]};
+
+		int result = fetch(project_name, "./lib/");
+		if (result)
+			return result;
+		
+		/*
+		string command {"curl -o ./lib/" + project_name + ".cpp" + " " + remote + project_name + ".cpp"};
+		int result = boost::process::system(command);
+		std::cout << result << std::endl;
+		*/
+
+		std::cout << "Done!" << std::endl;
+
+	}
+	else {
 		std::cerr << "Currently only support `install` directive." << std::endl;
 		return 1;
 	}
-	string project_name {argv[2]};
-
-	int result = fetch(project_name, "./lib/");
-	if (result)
-		return result;
-	
-	/*
-	string command {"curl -o ./lib/" + project_name + ".cpp" + " " + remote + project_name + ".cpp"};
-	int result = boost::process::system(command);
-	std::cout << result << std::endl;
-	*/
-
-	std::cout << "Done!" << std::endl;
 	return 0;
 }
 
